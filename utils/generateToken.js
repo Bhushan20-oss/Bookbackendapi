@@ -7,4 +7,4 @@ const generateToken =(id)=>{
 };
 
 
-module.exports = generateTokens;
+module.exports = generateToken;
