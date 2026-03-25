@@ -8,7 +8,7 @@ const req = require('express/lib/request');
 
 
 router.post('/', protect, async(req,res)=>{
-    const {title, author, genre, price, instock} =req.body;
+    const {title, author, genre, price, inStock} =req.body;
 
     try {
         const book = await Books.create({
@@ -16,7 +16,7 @@ router.post('/', protect, async(req,res)=>{
             author,
             genre,
             price,
-            instock,
+            inStock,
             user:req.user._id,
         });
 
@@ -53,8 +53,7 @@ router.get('/', async(req, res)=>{
 
 router.get('/:id', async(req, res)=>{
     try {
-        const book = await Books.findById(req.params.id).populate("user", "name email");;
-
+        const book = await Books.findById(req.params.id).populate("user", "name email");
         if(!book){
             return res.status(404).json({
                 message:'book not found',
@@ -65,6 +64,72 @@ router.get('/:id', async(req, res)=>{
         res.status(500).json({
             message:'Error fetching ',
             error:error.message,
+        });
+    }
+});
+
+router.put('/:id', protect, async (req, res)=>{
+    try {
+        const book = await Books.findById(req.params.id);
+
+        if(!book){
+            return res.status(404).json({
+                message:'book not found',
+            });
+        }
+
+        if(book.user.toString() !== req.user._id.toString()){
+            return res.status(401).json({
+                message:'Not authorized to update this book',
+            });
+        }
+
+        const updatedBook =  await Books.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {returnDocument:"after"}
+        );
+
+        res.json({
+            message:'book updated successfully',
+            book:updatedBook,
+        })
+    } catch (error) {
+       res.status(500).json({
+        message:"Error updating book",
+        error:error.message,
+       }); 
+    }
+});
+
+
+//deleting an book 
+
+router.delete('/:id', protect, async(req, res)=>{
+    try {
+        const book = await Books.findById(req.params.id);
+
+        if(!book){
+            return res.status(404).json({
+                message:"book not found",
+            });
+        }
+
+        if(book.user.toString()!== req.user._id.toString()){
+            return res.status(401).json({
+                message:"Not Authorised to delete this book",
+            });
+        }
+
+        await book.deleteOne();
+
+        res.json({
+            message:"Book deleted Successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message:"Error deleting book",
+            error: error.message,
         });
     }
 });

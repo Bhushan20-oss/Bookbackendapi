@@ -12,7 +12,7 @@ const bookschema =mongoose.Schema(
         },
         genre:String,
         price:Number,
-        isStock:Boolean,
+        inStock:Boolean,
 
         user:{
             type:mongoose.Schema.Types.ObjectId,
