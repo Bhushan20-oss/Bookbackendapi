@@ -169,35 +169,8 @@ Same title + author + user → Not allowed
 
 ---
 
-## 🧠 Error Handling
 
-* Centralized error middleware
-* Proper HTTP status codes
-* Clean API responses
 
----
-
-## 🚀 Deployment
-
-Deployed on **Render**
-
-Steps:
-
-1. Push code to GitHub
-2. Connect repo to Render
-3. Add environment variables
-4. Deploy
-
----
-
-## 📌 Future Improvements
-
-* 🔍 Search & filtering
-* 📄 Pagination
-* 📊 Analytics dashboard
-* 📁 File uploads
-
----
 
 ## 👨‍💻 Author
 
