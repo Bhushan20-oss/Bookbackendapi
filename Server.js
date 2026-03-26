@@ -1,39 +1,30 @@
 const express = require("express");
-const app = express();
 const dotenv = require('dotenv');
 const connectDB = require('./config/db')
-
+const {errorHandler}= require('./middleware/errorMiddleware');
 
 
 dotenv.config();
-connectDB();
 
+if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
+  console.error("Missing ENV variables");
+  process.exit(1);
+}
+
+connectDB();
+console.log("connected to db");
+
+const app = express();
 app.use(express.json());
 
-const {protect}= require('./middleware/authMiddleware');
 
-//imports routes 
-const userRoutes= require('./Routes/userRoutes');
-const bookRoutes = require('./Routes/bookRoutes');
+app.use('/api/users', require('./Routes/userRoutes'));
+app.use('/api/books', require('./Routes/bookRoutes'));
 
-app.get('/api/test', protect,(req, res)=>{
-    res.json({
-        message:"Protected route accessed",
-        user:req.user,
-    });
-});
-
-app.get('/', (req, res)=>{
-    res.send('backend running')
-});
-//Routes
-app.use('/api/users', userRoutes)
-app.use("/api/books", bookRoutes);
+app.use(errorHandler);
 
 // port
-const PORT =process .env.PORT;
-
-
+const PORT =process.env.PORT||5000;
 
 app.listen(PORT,()=>{
     console.log(`Server Running on Port ${PORT}`);
